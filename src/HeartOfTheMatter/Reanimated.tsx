@@ -9,6 +9,8 @@ import Animated, {
 
 import { StyleGuide } from "../components";
 
+import { useMakeJsThreadBusy } from "./useMakeJSThreadBusy";
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -42,7 +44,7 @@ export const Reanimated = () => {
   const style = useAnimatedStyle(() => ({
     transform: [{ translateX: x.value }, { translateY: y.value }],
   }));
-  //useMakeJsThreadBusy();
+  useMakeJsThreadBusy();
   return (
     <View style={styles.container}>
       <PanGestureHandler onGestureEvent={onGestureEvent}>
