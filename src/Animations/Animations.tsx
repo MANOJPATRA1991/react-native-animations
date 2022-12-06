@@ -6,9 +6,11 @@ import {
   useSharedValue,
   Easing,
 } from "react-native-reanimated";
-import { withPause } from "react-native-redash";
+
+// import { withPause } from "react-native-redash";
 
 import { Button, StyleGuide } from "../components";
+import { withPause } from "../components/AnimatedHelpers/Animation";
 
 import { ChatBubble } from "./ChatBubble";
 
