@@ -1,1 +1,1 @@
-export { CircularSlider } from "./CircularSlider";
+export { CircularSlider } from "./boilerplate/CircularSlider";
