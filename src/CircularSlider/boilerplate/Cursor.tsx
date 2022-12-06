@@ -14,9 +14,15 @@ interface CursorProps {
   r: number;
   strokeWidth: number;
   theta: Animated.SharedValue<number>;
+  backgroundColor: Animated.SharedValue<string | number>;
 }
 
-export const Cursor = ({ r, strokeWidth, theta }: CursorProps) => {
+export const Cursor = ({
+  r,
+  strokeWidth,
+  theta,
+  backgroundColor,
+}: CursorProps) => {
   const center = { x: r, y: r };
 
   const onGestureEvent = useAnimatedGestureHandler<
@@ -64,6 +70,7 @@ export const Cursor = ({ r, strokeWidth, theta }: CursorProps) => {
       center
     );
     return {
+      backgroundColor: backgroundColor.value,
       transform: [{ translateX }, { translateY }],
     };
   });
