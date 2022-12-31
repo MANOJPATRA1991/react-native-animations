@@ -1,9 +1,14 @@
 import { View, Dimensions, StyleSheet } from "react-native";
 import Svg, { Path, Defs, Stop, LinearGradient } from "react-native-svg";
 import * as shape from "d3-shape";
-import { interpolate, Extrapolate } from "react-native-reanimated";
+import {
+  interpolate,
+  Extrapolate,
+  useSharedValue,
+  useDerivedValue,
+} from "react-native-reanimated";
 
-import { parsePath } from "../../components/AnimatedHelpers";
+import { getPointAtLength, parsePath } from "../../components/AnimatedHelpers";
 
 import { Cursor } from "./Cursor";
 import { Label } from "./Label";
@@ -56,19 +61,20 @@ const styles = StyleSheet.create({
 });
 
 export const Graph = () => {
-  const point = {
-    coord: {
-      x: 0,
-      y: 0,
-    },
-    data: {
-      x: scaleInvert(0, domain.x, range.x),
-      y: scaleInvert(0, domain.y, range.y),
-    },
-  };
+  const length = useSharedValue(0);
+  const point = useDerivedValue(() => {
+    const coord = getPointAtLength(path, length.value);
+    return {
+      coord,
+      data: {
+        x: scaleInvert(coord.x, domain.x, range.x),
+        y: scaleInvert(coord.y, domain.y, range.y),
+      },
+    };
+  });
   return (
     <View style={styles.container}>
-      <Label {...{ data, point }} />
+      <Label {...{ point }} />
       <View>
         <Svg {...{ width, height }}>
           <Defs>
@@ -84,12 +90,14 @@ export const Graph = () => {
             strokeWidth={5}
             {...{ d }}
           />
+          {/* eslint-disable-next-line max-len */}
+          {/* https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#:~:text=The%20element%20is%20the,created%20as%20s. */}
           <Path
-            d={`${d}  L ${width} ${height} L 0 ${height}`}
+            d={`${d} L ${width} ${height} L 0 ${height}`}
             fill="url(#gradient)"
           />
         </Svg>
-        <Cursor {...{ path }} />
+        <Cursor {...{ path, length, point }} />
       </View>
     </View>
   );
