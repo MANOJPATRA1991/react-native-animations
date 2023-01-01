@@ -1,1 +1,1 @@
-export { Bezier } from "./Bezier";
+export { BezierCurves as Bezier } from "./boilerplate/Bezier";
