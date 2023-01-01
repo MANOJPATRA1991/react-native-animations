@@ -13,13 +13,17 @@ import { useTranslate } from "../../components/AnimatedHelpers";
 interface DraggableCardProps {
   width: number;
   height: number;
+  translate: {
+    x: Animated.SharedValue<number>;
+    y: Animated.SharedValue<number>;
+  };
 }
 
-export const DraggableCard = ({ width, height }: DraggableCardProps) => {
-  const translate = {
-    x: useSharedValue(0),
-    y: useSharedValue(0),
-  };
+export const DraggableCard = ({
+  translate,
+  width,
+  height,
+}: DraggableCardProps) => {
   const boundX = width - CARD_WIDTH;
   const boundY = height - CARD_HEIGHT;
   const onGestureEvent = useAnimatedGestureHandler<
