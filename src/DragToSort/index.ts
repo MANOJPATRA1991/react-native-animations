@@ -1,1 +1,1 @@
-export { DragToSort } from "./DragToSort";
+export { DragToSort } from "./boilerplate/DragToSort";
