@@ -1,4 +1,9 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Dimensions, Image, StyleSheet, Text, View } from "react-native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  useAnimatedStyle,
+} from "react-native-reanimated";
 
 export interface ProfileModel {
   id: string;
@@ -7,7 +12,11 @@ export interface ProfileModel {
   profile: number;
 }
 
+const { width, height } = Dimensions.get("window");
+
 export const α = Math.PI / 12;
+export const A = Math.sin(α) * height + Math.cos(α) * width;
+
 const styles = StyleSheet.create({
   image: {
     ...StyleSheet.absoluteFillObject,
@@ -58,25 +67,68 @@ const styles = StyleSheet.create({
 interface CardProps {
   profile: ProfileModel;
   onTop: boolean;
+  translateX: Animated.SharedValue<number>;
+  translateY: Animated.SharedValue<number>;
+  scale: Animated.SharedValue<number>;
 }
 
-export const Profile = ({ profile }: CardProps) => {
+export const Profile = ({
+  profile,
+  onTop,
+  translateX,
+  translateY,
+  scale,
+}: CardProps) => {
+  const style = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+      {
+        rotate: `${interpolate(
+          translateX.value,
+          [-width / 2, 0, width / 2],
+          [α, 0, -α],
+          Extrapolate.CLAMP
+        )}rad`,
+      },
+      { scale: onTop ? 1 : scale.value },
+    ],
+  }));
+
+  const likeStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [0, width / 4],
+      [0, 1],
+      Extrapolate.CLAMP
+    ),
+  }));
+
+  const nopeStyle = useAnimatedStyle(() => ({
+    opacity: interpolate(
+      translateX.value,
+      [-width / 4, 0],
+      [1, 0],
+      Extrapolate.CLAMP
+    ),
+  }));
+
   return (
-    <View style={[StyleSheet.absoluteFill]}>
+    <Animated.View style={[StyleSheet.absoluteFill, style]}>
       <Image style={styles.image} source={profile.profile} />
       <View style={styles.overlay}>
         <View style={styles.header}>
-          <View style={[styles.like]}>
+          <Animated.View style={[styles.like, likeStyle]}>
             <Text style={styles.likeLabel}>LIKE</Text>
-          </View>
-          <View style={[styles.nope]}>
+          </Animated.View>
+          <Animated.View style={[styles.nope, nopeStyle]}>
             <Text style={styles.nopeLabel}>NOPE</Text>
-          </View>
+          </Animated.View>
         </View>
         <View style={styles.footer}>
           <Text style={styles.name}>{profile.name}</Text>
         </View>
       </View>
-    </View>
+    </Animated.View>
   );
 };
